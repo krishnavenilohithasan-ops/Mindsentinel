@@ -1,7 +1,12 @@
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:5000/api' 
+    : 'https://mindsentinel-backend.onrender.com/api';
+
 let burnoutChart;
 
 document.addEventListener("DOMContentLoaded", () => {
     initGaugeChart(30);
+    refreshDashboard();
 });
 
 /* SIDEBAR LOGIC */
@@ -97,11 +102,51 @@ function checkBurnout() {
     const totalScoreRaw = (physScore * 3) + (mentalScore * 3) + (workScore * 2.5) + (lifeScore * 1.5);
     const finalScore = Math.min(100, Math.round(totalScoreRaw * 1.3));
 
+    let riskLevel = "LOW";
+    if (finalScore > 70) riskLevel = "HIGH";
+    else if (finalScore > 40) riskLevel = "MEDIUM";
+
     setTimeout(() => {
+        submitData({
+            sleep: sleep,
+            work: workHours,
+            stress: stress,
+            score: finalScore,
+            riskLevel: riskLevel
+        });
+
         btn.innerHTML = originalText;
         updateChartData(finalScore);
         updateDashboardSuggestions(finalScore, sleep, workHours);
     }, 800);
+}
+
+async function submitData(data) {
+    try {
+        await fetch(`${BASE_URL}/burnout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+    } catch(err) {
+        console.error('Error saving data:', err);
+    }
+}
+
+async function refreshDashboard() {
+    try {
+        const response = await fetch(`${BASE_URL}/records`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.records && data.records.length > 0) {
+                const latest = data.records[0];
+                updateChartData(latest.score);
+                updateDashboardSuggestions(latest.score, latest.sleep, latest.work);
+            }
+        }
+    } catch(err) {
+        console.error('Error fetching dashboard data', err);
+    }
 }
 
 function updateChartData(score) {

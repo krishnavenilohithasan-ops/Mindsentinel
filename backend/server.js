@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 import connectDB from './config/db.js';
 import User from './models/User.js';
-import BurnoutData from './models/BurnoutData.js';
+import Record from './models/Record.js';
 
 dotenv.config();
 
@@ -65,37 +65,25 @@ app.post('/api/auth/login', async (req, res) => {
 // ==========================================
 // BURNOUT LOGIC & STORAGE
 // ==========================================
-app.post('/api/burnout/analyze', (req, res) => {
-    const { sleepHours, walkingTime, workingHours } = req.body;
-    let level = "MEDIUM";
-    let rawScore = 50;
 
-    if (sleepHours < 5 && workingHours > 8) { level = "HIGH"; rawScore = 85; }
-    else if (sleepHours >= 5 && sleepHours <= 7 && workingHours >= 6 && workingHours <= 8) { level = "MEDIUM"; rawScore = 55; }
-    else if (sleepHours > 7 && walkingTime > 30) { level = "LOW"; rawScore = 20; }
-    else {
-        if(sleepHours < 6) rawScore += 20;
-        if(workingHours > 9) rawScore += 20;
-        if(walkingTime < 20) rawScore += 10;
-        if (rawScore > 70) level = "HIGH"; else if (rawScore > 40) level = "MEDIUM"; else level = "LOW";
+app.post('/api/burnout', async (req, res) => {
+    try {
+        const { sleep, work, stress, score, riskLevel } = req.body;
+        const newRecord = new Record({ sleep, work, stress, score, riskLevel });
+        await newRecord.save();
+        res.status(201).json({ message: "Saved successfully", record: newRecord });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-
-    res.json({ burnoutLevel: level, rawScore, suggestions: level === 'HIGH' ? ["Take rest immediately"] : ["Keep it up"] });
 });
 
-app.post('/api/user/save', async (req, res) => { // Optional Auth omitted for hackathon speed test
+app.get('/api/records', async (req, res) => {
     try {
-        const entry = new BurnoutData(req.body); 
-        await entry.save();
-        res.json({ message: "Saved successfully", entry });
-    } catch (error) { res.status(500).json({ error: error.message }); }
-});
-
-app.get('/api/user/data', async (req, res) => {
-    try {
-        const history = await BurnoutData.find().sort({ createdAt: -1 }).limit(10);
-        res.json({ history });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+        const records = await Record.find().sort({ createdAt: -1 }).limit(10);
+        res.json({ records });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // ==========================================
