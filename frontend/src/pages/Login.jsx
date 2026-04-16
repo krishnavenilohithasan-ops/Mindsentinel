@@ -17,6 +17,7 @@ const Login = () => {
     // Simple mock authentication for now
     if (email.includes('@gmail.com') || email.includes('@')) {
       // Simulate successful login
+      localStorage.setItem('isAuthenticated', 'true');
       navigate('/dashboard');
     } else {
       setError('Invalid email format. Please use a valid Mail ID.');
