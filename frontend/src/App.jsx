@@ -7,13 +7,15 @@ import AIInsights from './pages/AIInsights';
 import Wellness from './pages/Wellness';
 import FocusMode from './pages/FocusMode';
 import Profile from './pages/Profile';
+import Login from './pages/Login';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/login" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="ai-insights" element={<AIInsights />} />
