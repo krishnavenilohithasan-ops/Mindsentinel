@@ -66,10 +66,31 @@ app.post('/api/auth/login', async (req, res) => {
 // BURNOUT LOGIC & STORAGE
 // ==========================================
 
-app.post('/api/burnout', async (req, res) => {
+app.post('/api/burnout/analyze', (req, res) => {
+    const { sleepHours, workingHours, walkingTime } = req.body;
+    let burnoutLevel = "LOW";
+    let rawScore = 30;
+    let suggestions = ["Keep up your excellent routine!"];
+
+    if (sleepHours < 5 && workingHours > 8) {
+        burnoutLevel = "HIGH";
+        rawScore = 85;
+        suggestions = ["Critical risk. Sleep immediately.", "Reduce working hours."];
+    } else if (sleepHours <= 7 && workingHours >= 6) {
+        burnoutLevel = "MEDIUM";
+        rawScore = 55;
+        suggestions = ["Take shorter breaks.", "Balance is key."];
+    }
+    
+    res.json({ burnoutLevel, rawScore, suggestions });
+});
+
+app.post('/api/user/save', async (req, res) => {
     try {
-        const { sleep, work, stress, score, riskLevel } = req.body;
-        const newRecord = new Record({ sleep, work, stress, score, riskLevel });
+        const { sleepHours, workingHours, walkingTime, foodIntake, burnoutLevel, rawScore } = req.body;
+        const newRecord = new Record({ 
+            sleepHours, workingHours, walkingTime, foodIntake, burnoutLevel, rawScore 
+        });
         await newRecord.save();
         res.status(201).json({ message: "Saved successfully", record: newRecord });
     } catch (error) {

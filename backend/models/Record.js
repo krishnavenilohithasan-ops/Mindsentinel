@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 
 const recordSchema = new mongoose.Schema({
-    sleep: { type: Number, required: true },
-    work: { type: Number, required: true },
-    stress: { type: Number, required: true },
-    score: { type: Number, required: true },
-    riskLevel: { type: String, required: true },
+    sleepHours: { type: Number, required: true },
+    workingHours: { type: Number, required: true },
+    walkingTime: { type: Number, required: true },
+    foodIntake: { type: String, required: false },
+    rawScore: { type: Number, required: true },
+    burnoutLevel: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
