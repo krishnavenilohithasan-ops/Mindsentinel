@@ -1,11 +1,11 @@
 services:
   - type: web
     name: mindsentinel-backend
-      plan: free
+    plan: free
     env: node
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://admin:admin123@cluster.rpvq4sx.mongodb.net/mindsentinel?retryWrites=true&w=majority&appName=Cluster
