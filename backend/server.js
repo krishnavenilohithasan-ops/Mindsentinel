@@ -18,6 +18,13 @@ app.use(express.json());
 connectDB();
 
 // ==========================================
+// HEALTH CHECK
+// ==========================================
+app.get('/', (req, res) => {
+    res.json({ message: "Welcome to MindSentinel API! The brain is running." });
+});
+
+// ==========================================
 // JWT MIDDLEWARE
 // ==========================================
 const authenticate = (req, res, next) => {
