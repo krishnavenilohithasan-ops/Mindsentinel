@@ -1,6 +1,20 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, PieChart, Bot, Leaf, Timer, Settings, Menu, LogOut, Brain, Users, X } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  ClipboardPlus, 
+  Flame, 
+  Sparkles, 
+  Gamepad2, 
+  Target, 
+  BarChart3, 
+  Brain, 
+  Users, 
+  Settings, 
+  Menu, 
+  LogOut, 
+  X 
+} from 'lucide-react';
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const navigate = useNavigate();
@@ -9,12 +23,16 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const isAdmin = user?.isAdmin === true;
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: Home },
-    { name: 'Analytics', path: '/analytics', icon: PieChart },
-    { name: 'AI Insights', path: '/ai-insights', icon: Bot },
-    { name: 'Wellness', path: '/wellness', icon: Leaf },
-    { name: 'Focus Mode', path: '/focus-mode', icon: Timer },
-    { name: 'Profile / Settings', path: '/profile', icon: Settings },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Daily Input', path: '/daily-input', icon: ClipboardPlus },
+    { name: 'Burnout Analysis', path: '/burnout-analysis', icon: Flame },
+    { name: 'Prediction', path: '/prediction', icon: Sparkles },
+    { name: 'Simulator', path: '/simulator', icon: Gamepad2 },
+    { name: 'Action Plan', path: '/action-plan', icon: Target },
+    { name: 'Progress / Reports', path: '/progress', icon: BarChart3 },
+    { name: 'Insights', path: '/insights', icon: Brain },
+    { name: 'Community', path: '/community', icon: Users },
+    { name: 'Settings', path: '/settings', icon: Settings },
   ];
 
   if (isAdmin) {
@@ -39,21 +57,20 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
       )}
 
       <aside 
-        className={`fixed md:relative top-0 left-0 h-full z-50 bg-[#161a23] border-r border-[#2d3440] flex flex-col transition-all duration-300 py-5 ${
+        className={`fixed md:relative top-0 left-0 h-full z-50 bg-[#161a23] border-r border-white/5 flex flex-col transition-all duration-300 py-5 ${
           isCollapsed ? '-translate-x-full md:translate-x-0 w-64 md:w-20' : 'translate-x-0 w-64'
         }`}
       >
         <div className={`flex items-center justify-between px-5 mb-8 ${isCollapsed ? 'md:justify-center md:px-0' : ''}`}>
           <div className={`flex items-center gap-3 ${isCollapsed ? 'hidden md:hidden' : 'flex'}`}>
-            <div className="w-10 h-10 min-w-[40px] bg-green-400/15 text-green-400 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 min-w-[40px] bg-emerald-400/15 text-emerald-400 rounded-xl flex items-center justify-center">
               <Brain size={22} />
             </div>
-            <h1 className="text-white font-bold text-lg whitespace-nowrap transition-opacity duration-300">
+            <h1 className="text-white font-black text-lg whitespace-nowrap tracking-tight">
               MindSentinel
             </h1>
           </div>
 
-          {/* Close button on mobile / Toggle button on desktop */}
           <button onClick={toggleSidebar} className="text-gray-400 hover:text-white transition-colors">
             <span className="md:hidden"><X size={24} /></span>
             <span className="hidden md:block">
@@ -62,24 +79,24 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
           </button>
         </div>
 
-        <nav className="flex-1 flex flex-col gap-2 px-3 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 flex flex-col gap-1 px-3 overflow-y-auto no-scrollbar">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap ${
+                `flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all duration-200 text-xs tracking-wide ${
                   isActive
-                    ? 'bg-gradient-to-r from-green-400/10 to-transparent border-l-4 border-green-400 text-white shadow-[inset_4px_0_0_#4ade80]'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-4 border-transparent'
+                    ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 shadow-[0_4px_20px_rgba(16,185,129,0.1)]'
+                    : 'text-gray-500 hover:bg-white/[0.03] hover:text-gray-300'
                 } ${isCollapsed ? 'md:justify-center md:px-0' : ''}`
               }
             >
               {({ isActive }) => (
                 <>
                   <item.icon 
-                    size={20} 
-                    className={isActive ? 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]' : ''} 
+                    size={18} 
+                    className={isActive ? 'text-emerald-400' : 'text-gray-500'} 
                   />
                   <span className={`${isCollapsed ? 'md:hidden' : 'block'}`}>{item.name}</span>
                 </>
@@ -88,10 +105,10 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
           ))}
         </nav>
 
-        <div className="px-4 mt-6">
-          <button onClick={handleLogout} className={`w-full flex items-center justify-center gap-3 bg-[#1c212a] border border-[#2d3440] py-3 rounded-xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all text-gray-400 ${isCollapsed ? 'md:px-0' : ''}`}>
-            <LogOut size={18} />
-            <span className={`font-medium ${isCollapsed ? 'md:hidden' : 'block'}`}>Logout</span>
+        <div className="px-3 mt-6">
+          <button onClick={handleLogout} className={`w-full flex items-center justify-center gap-3 bg-white/[0.03] border border-white/5 py-3 rounded-xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all text-gray-500 text-xs font-bold ${isCollapsed ? 'md:px-0' : ''}`}>
+            <LogOut size={16} />
+            <span className={`${isCollapsed ? 'md:hidden' : 'block'}`}>Logout</span>
           </button>
         </div>
       </aside>
