@@ -8,6 +8,7 @@ import Wellness from './pages/Wellness';
 import FocusMode from './pages/FocusMode';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
+import AdminPortal from './pages/AdminPortal';
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
@@ -27,6 +28,7 @@ function App() {
           <Route path="wellness" element={<Wellness />} />
           <Route path="focus-mode" element={<FocusMode />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="admin" element={<AdminPortal />} />
         </Route>
       </Routes>
     </BrowserRouter>

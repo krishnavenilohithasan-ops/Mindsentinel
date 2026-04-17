@@ -16,6 +16,9 @@ const Layout = () => {
     return path.substring(1).split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : { firstName: 'User' };
+
   return (
     <div className="flex bg-[#12151e] h-screen text-gray-400 overflow-hidden font-sans">
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
@@ -27,7 +30,7 @@ const Layout = () => {
           <div className="flex gap-4 items-center">
             <div className="text-right text-xs">
               Welcome back,<br/>
-              <span className="text-green-400 font-bold text-sm tracking-wide">kiruba</span>
+              <span className="text-green-400 font-bold text-sm tracking-wide">{user.firstName}</span>
             </div>
             <div className="w-[40px] h-[40px] rounded-full bg-white/5 border border-gray-700 flex items-center justify-center text-white shadow-[0_0_15px_rgba(74,222,128,0.1)]">
               <i className="fa-solid fa-user-astronaut"></i>

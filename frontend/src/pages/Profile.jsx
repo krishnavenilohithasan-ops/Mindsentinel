@@ -1,9 +1,26 @@
-import React from 'react';
-import { Settings, User, Bell, Palette } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, User, Bell, Palette, ShieldCheck } from 'lucide-react';
+import api from '../api/axios';
 
 const Profile = () => {
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : { firstName: 'User', lastName: '', email: 'user@example.com' };
+  const [upgrading, setUpgrading] = useState(false);
+
+  const makeMeAdmin = async () => {
+    try {
+      setUpgrading(true);
+      await api.post('/admin/make-admin', { email: user.email });
+      alert('You are now an Admin! Please sign out and log back in to see the changes.');
+    } catch (error) {
+      alert('Failed: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+    <div className="max-w-4xl mx-auto w-full flex flex-col gap-6 pb-10">
         <h2 className="text-2xl font-bold text-white mb-2">Profile & Preferences</h2>
         
         <div className="bg-[#1c212a] border border-[#2d3440] rounded-2xl p-6 flex items-center gap-6">
@@ -11,11 +28,23 @@ const Profile = () => {
                 <User size={36} />
             </div>
             <div>
-                <h3 className="text-xl font-bold text-white">Kiruba</h3>
-                <p className="text-gray-400 text-sm mt-1">kiruba@mindsentinel.ai</p>
-                <button className="mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white font-medium transition-colors">
-                    Edit Profile
-                </button>
+                <h3 className="text-xl font-bold text-white">{user.firstName} {user.lastName}</h3>
+                <p className="text-gray-400 text-sm mt-1">{user.email}</p>
+                <div className="flex gap-3 mt-4">
+                  <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white font-medium transition-colors">
+                      Edit Profile
+                  </button>
+                  {!user.isAdmin && (
+                    <button 
+                      onClick={makeMeAdmin}
+                      disabled={upgrading}
+                      className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg text-sm text-purple-400 font-medium transition-colors flex items-center gap-2"
+                    >
+                      <ShieldCheck size={16} /> 
+                      {upgrading ? 'Upgrading...' : 'Dev Toggle: Make Admin'}
+                    </button>
+                  )}
+                </div>
             </div>
         </div>
 

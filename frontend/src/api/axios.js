@@ -9,5 +9,12 @@ const api = axios.create({
   }
 });
 
-// Hook interceptors for JWT here when fully implemented
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export default api;

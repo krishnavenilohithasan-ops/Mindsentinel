@@ -1,8 +1,13 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Home, PieChart, Bot, Leaf, Timer, Settings, Menu, LogOut, Brain } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Home, PieChart, Bot, Leaf, Timer, Settings, Menu, LogOut, Brain, Users } from 'lucide-react';
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
+  const navigate = useNavigate();
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+  const isAdmin = user?.isAdmin === true;
+
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Home },
     { name: 'Analytics', path: '/analytics', icon: PieChart },
@@ -11,6 +16,17 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
     { name: 'Focus Mode', path: '/focus-mode', icon: Timer },
     { name: 'Profile / Settings', path: '/profile', icon: Settings },
   ];
+
+  if (isAdmin) {
+    navItems.push({ name: 'Admin Portal', path: '/admin', icon: Users });
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isAuthenticated');
+    navigate('/login');
+  };
 
   return (
     <aside 
@@ -57,7 +73,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
       </nav>
 
       <div className="px-4 mt-6">
-        <button className={`w-full flex items-center justify-center gap-3 bg-[#1c212a] border border-[#2d3440] py-3 rounded-xl hover:bg-white/5 transition-colors text-gray-400 hover:text-white ${isCollapsed ? 'px-0' : ''}`}>
+        <button onClick={handleLogout} className={`w-full flex items-center justify-center gap-3 bg-[#1c212a] border border-[#2d3440] py-3 rounded-xl hover:bg-white/5 transition-colors text-gray-400 hover:text-white ${isCollapsed ? 'px-0' : ''}`}>
           <LogOut size={18} />
           {!isCollapsed && <span className="font-medium">Logout</span>}
         </button>

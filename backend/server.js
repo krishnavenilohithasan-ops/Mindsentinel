@@ -52,14 +52,40 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ error: "Invalid" });
+        if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: "Invalid" });
+        if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'hackathon_secret', { expiresIn: '7d' });
-        res.json({ token, user: { firstName: user.firstName, email: user.email }});
+        user.lastLogin = Date.now();
+        await user.save();
+
+        const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET || 'hackathon_secret', { expiresIn: '7d' });
+        res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email: user.email, isAdmin: user.isAdmin }});
     } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
+// Admin Route to get all users
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        // Find users, select specific fields, and sort by lastLogin descending
+        const users = await User.find().select('-password').sort({ lastLogin: -1 });
+        res.json({ users });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Helper route to quickly make a user an admin (For testing/setup)
+app.post('/api/admin/make-admin', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOneAndUpdate({ email }, { isAdmin: true }, { new: true });
+        if (!user) return res.status(404).json({ error: "User not found" });
+        res.json({ message: `${user.firstName} is now an Admin!` });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // ==========================================
